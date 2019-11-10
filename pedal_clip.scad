@@ -1,51 +1,41 @@
 // Super-basic first version, learning openscad...
 echo(version=version());
 
-thickness = 1;
+pedal_width = 38.0;
 
-base_width = 38 + thickness;
-base_depth = 10;
+base_thickness = 1;
+wall_thickness = 2;
+
+base_width = pedal_width;
+base_depth = 50;
 
 wall_height = 30;
 
-cube([base_width, base_depth, thickness], center=false);
+side_width = 8;
+hole_width = 5;
+hole_depth = 2;
 
-cube([thickness, base_depth, wall_height], center=false);
-translate([base_width, 0, 0]) {
-    cube([thickness, base_depth, wall_height], center=false);
-}
+cube([base_width, base_depth, base_thickness], center=false);
+cube([base_width, base_thickness, wall_height / 2], center=false);
 
-cube([base_width, thickness, wall_height / 2], center=false);
-
-/*
-translate([0,0,0]) {
-    union() {
-        cube(15, center=true);
+module side(){
+    translate([base_width / 2, 0, 0]){
+        translate([wall_thickness, 0, 0]) {
+            difference() {
+                cube([side_width, base_depth, base_thickness]);
+                translate([(side_width - hole_width)/2, hole_depth, ,0]) {
+                    cube([hole_width, hole_depth, base_thickness]);
+                }
+                translate([(side_width - hole_width)/2, base_depth - hole_depth * 2, ,0]) {
+                    cube([hole_width, hole_depth, base_thickness]);
+                }
+            }
+        }
+        cube([wall_thickness, base_depth, wall_height], center=false);
     }
 }
 
-color("green")
-    translate([-30, 0, 0])
-        linear_extrude(height = 20, scale = 0.2)
-            square([20, 10], center = true);
-
-
-translate([-24,0,0]) {
-    union() {
-        cube(15, center=true);
-        sphere(10);
-    }
+translate([base_width/2, 0, 0]) {
+    side();
+    mirror([1, 0, 0]) side();
 }
-
-intersection() {
-    cube(15, center=true);
-    sphere(10);
-}
-
-translate([24,0,0]) {
-    difference() {
-        cube(15, center=true);
-        sphere(10);
-    }
-}
-*/
